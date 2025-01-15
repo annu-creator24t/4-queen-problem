@@ -1,0 +1,65 @@
+class Solution {
+public:
+    bool isSafe(vector<vector<char>>& board, int row, int col, int n) {
+        // Check the current row for queens
+        for (int j = 0; j < n; j++) {
+            if (board[row][j] == 'Q') {
+                return false;
+            }
+        }
+        
+        // Check the current column for queens
+        for (int i = 0; i < n; i++) {
+            if (board[i][col] == 'Q') {
+                return false;
+            }
+        }
+        
+        // Check the upper-left diagonal for queens
+        for (int i = row, j = col; i >= 0 && j >= 0; i--, j--) {
+            if (board[i][j] == 'Q') {
+                return false;
+            }
+        }
+        
+        // Check the upper-right diagonal for queens
+        for (int i = row, j = col; i >= 0 && j < n; i--, j++) {
+            if (board[i][j] == 'Q') {
+                return false;
+            }
+        }
+        
+        return true; // The position is safe for placing a queen
+    }
+
+    void nQueen(int row, vector<vector<char>>& board, vector<vector<string>>& ans) {
+        int n = board.size();
+        
+        if (row == n) {  // If all queens are placed successfully
+            vector<string> solution; // Store the current board configuration as a solution
+            for (int i = 0; i < n; i++) {
+                string rowString(board[i].begin(), board[i].end());  // Convert the row to a string
+                solution.push_back(rowString);
+            }
+            ans.push_back(solution); // Add the solution to the result
+            return;
+        }
+        
+        // Try placing a queen in each column of the current row
+        for (int j = 0; j < n; j++) {
+            if (isSafe(board, row, j, n)) {
+                board[row][j] = 'Q';  // Place the queen
+                nQueen(row + 1, board, ans);  // Recursively place queens in the next row
+                board[row][j] = '.';  // Backtrack and remove the queen
+            }
+        }
+    }
+
+    vector<vector<string>> solveNQueens(int n) {
+        vector<vector<char>> board(n, vector<char>(n, '.'));  // Initialize an empty board
+        vector<vector<string>> ans;  // Store the solutions
+        nQueen(0, board, ans);  // Start placing queens from the first row
+        return ans;  // Return the list of solutions
+    }
+};
+
